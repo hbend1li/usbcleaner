@@ -1,2 +1,2 @@
-# usbcleaner
+# USB Cleaner
 USB Cleaner
