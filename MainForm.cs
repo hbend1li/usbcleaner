@@ -198,10 +198,6 @@ namespace usb_cleaner
 			}
 		}
 		
-		void select_usb(string msg)
-		{
-			textBox.Text += msg;
-		}
 		
 		void USBAdded(object sender, EventArgs e)
 		{
@@ -211,9 +207,6 @@ namespace usb_cleaner
 			//textBox.Text += " USB Detect ";
 			//Debug.WriteLine ("detect ");
 			//select_usb(" USB Detect ");
-			
-
-			comboBox1.Text = "hhhhhhhhhhhhhhhhhhh";
 			
 
 			ManagementObjectSearcher searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_DiskDrive WHERE InterfaceType = \"USB\"");
@@ -277,8 +270,7 @@ namespace usb_cleaner
 		}
 		void Button2Click(object sender, EventArgs e)
 		{
-			select_usb("test du button");
-			
+		
 			if (this.Size.Height == 210)
 				this.Size = new System.Drawing.Size(300, 511);
 			else 
