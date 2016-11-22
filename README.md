@@ -67,20 +67,15 @@ USB Cleaner
 * YahooMessenger.exe
 
 ### Delete directory
-* \System Volume Information
-* \RECYCLER
-* \RECYCLED
+* System Volume Information
+* RECYCLER
+* RECYCLED
+* $Recycler
+* $RECYCLE.BIN
+* $RECYCLEBIN
 * My Pictures
-* Nouveau dossier
 * FILE.*
 * FOUND.*
-* %temp%\. %windir%\prefetch\. %windir%\temp\.
-* %APPDATA%"\notepad
-* $Recycler
 * Skype
 * Skypee
 * Google
-* $RECYCLE.BIN
-* $RECYCLEBIN
-* c:\$RECYCLE.BIN
-* d:\$RECYCLE.BIN
