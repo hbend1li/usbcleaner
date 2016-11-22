@@ -1,0 +1,8 @@
+D:\project\usbcleaner\usb cleaner\bin\Debug\USB Cleaner.exe.config
+D:\project\usbcleaner\usb cleaner\bin\Debug\USB Cleaner.exe
+D:\project\usbcleaner\usb cleaner\bin\Debug\USB Cleaner.pdb
+D:\project\usbcleaner\usb cleaner\obj\Debug\usb cleaner.csprojResolveAssemblyReference.cache
+D:\project\usbcleaner\usb cleaner\obj\Debug\usb_cleaner.MainForm.resources
+D:\project\usbcleaner\usb cleaner\obj\Debug\usb cleaner.csproj.GenerateResource.Cache
+D:\project\usbcleaner\usb cleaner\obj\Debug\USB Cleaner.exe
+D:\project\usbcleaner\usb cleaner\obj\Debug\USB Cleaner.pdb

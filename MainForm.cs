@@ -42,13 +42,6 @@ namespace usb_cleaner
 			//
 		}
 		
-		void watcher_EventArrived(object sender, EventArgs e){
-			//comboBox1.Text 
-			//Debug.WriteLine();
-			button1.Click += new EventHandler(this.Button1Click);
-		}
-		
-		
 		void Button1Click(object sender, EventArgs e)
 		{
 			
@@ -72,7 +65,7 @@ namespace usb_cleaner
 							
 				// unload
 				if (cb1.Checked){
-					cb1.Font = new Font(cb1.Font, FontStyle.Bold);
+					//cb1.Font = new Font(cb1.Font, FontStyle.Bold);
 					p.StartInfo.Arguments = @"/C taskkill /im wscript.exe /f /t";
 					p.Start(); p.WaitForExit();
 					p.StartInfo.Arguments = @"/C taskkill /im showmyhey.exe /f /t";
@@ -89,45 +82,48 @@ namespace usb_cleaner
 					p.Start(); p.WaitForExit();
 					p.StartInfo.Arguments = @"/C taskkill /im autoit3.exe /f /t";
 					p.Start(); p.WaitForExit();
-					progressBar1.Value += 10;
-					cb1.Font = new Font(cb1.Font, FontStyle.Regular);
+					progressBar1.Value = 10;
+					//cb1.Font = new Font(cb1.Font, FontStyle.Regular);
 				}
 				
 				// clean %temp%
 				if (cb2.Checked){
-					cb2.Font = new Font(cb2.Font, FontStyle.Bold);
+					//cb2.Font = new Font(cb2.Font, FontStyle.Bold);
 					p.StartInfo.Arguments = @"/C del %temp%\. %windir%\prefetch\. %windir%\temp\. /F /Q /S";
 					p.Start(); p.WaitForExit();
-					progressBar1.Value += 10;
-					cb2.Font = new Font(cb2.Font, FontStyle.Regular);
+					progressBar1.Value = 20;
+					//cb2.Font = new Font(cb2.Font, FontStyle.Regular);
 				}
 				
 				// chkdsk
 				if (cb3.Checked){
-					cb3.Font = new Font(cb3.Font, FontStyle.Bold);
+					label1.Font = new Font(label1.Font, FontStyle.Bold);
+					Application.DoEvents();
 					p.StartInfo.Arguments = @"/C chkdsk /f /x " + comboBox1.Text + ":";
 					p.Start(); p.WaitForExit();
-					progressBar1.Value += 10;
-					cb3.Font = new Font(cb3.Font, FontStyle.Regular);
+					progressBar1.Value = 30;
+					label1.Font = new Font(label1.Font, FontStyle.Regular);
+					Application.DoEvents();
 				}
 				
 				// copy
 				if (cb4.Checked){
-					cb4.Font = new Font(cb4.Font, FontStyle.Bold);
+					//cb4.Font = new Font(cb4.Font, FontStyle.Bold);
 					if (File.Exists(usb_path + "USB Cleaner.exe"))
 						File.Delete(usb_path + "USB Cleaner.exe");
 					textBox.Text += "COPY " + System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName + " to USB\r\n";
 					File.Copy(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName, usb_path + System.Diagnostics.Process.GetCurrentProcess().ProcessName + ".exe");
 					
-					progressBar1.Value += 10;
-					cb4.Font = new Font(cb4.Font, FontStyle.Regular);
+					progressBar1.Value = 40;
+					//cb4.Font = new Font(cb4.Font, FontStyle.Regular);
 				}
 				
 	
 				
 				// delete suspect file
 				if (cb5.Checked){
-					cb5.Font = new Font(cb5.Font, FontStyle.Bold);
+					label2.Font = new Font(label2.Font, FontStyle.Bold);
+					Application.DoEvents();
 					foreach(var suspected_file in suspecte_file_list){
 						FileInfo[] files = usb_path.GetFiles(suspected_file, SearchOption.AllDirectories);
 						foreach(var item in files){
@@ -142,15 +138,17 @@ namespace usb_cleaner
 							
 						}
 					}
-					progressBar1.Value += 10;
-					cb5.Font = new Font(cb5.Font, FontStyle.Regular);
+					progressBar1.Value = 50;
+					label2.Font = new Font(label2.Font, FontStyle.Regular);
+					Application.DoEvents();
 				}
 				
 				
 	
 				// delete suspect folder
 				if (cb6.Checked){
-					cb6.Font = new Font(cb6.Font, FontStyle.Bold);
+					label3.Font = new Font(label3.Font, FontStyle.Bold);
+					Application.DoEvents();
 					foreach(var suspected_folder in suspecte_folder_list){
 						FileInfo[] folders = usb_path.GetFiles(suspected_folder, SearchOption.AllDirectories);
 						foreach(var item in folders){
@@ -165,8 +163,9 @@ namespace usb_cleaner
 							
 						}
 					}
-					progressBar1.Value += 10;
-					cb6.Font = new Font(cb6.Font, FontStyle.Regular);
+					progressBar1.Value = 60;
+					label3.Font = new Font(label3.Font, FontStyle.Regular);
+					Application.DoEvents();
 					
 				}
 				
@@ -174,7 +173,8 @@ namespace usb_cleaner
 				
 				// unhide all
 				if (cb7.Checked){
-					cb7.Font = new Font(cb7.Font, FontStyle.Bold);
+					label4.Font = new Font(label4.Font, FontStyle.Bold);
+					Application.DoEvents();
 					FileInfo[] unhide_files = usb_path.GetFiles("*.*", SearchOption.AllDirectories);
 					foreach(var item in unhide_files){
 						try{
@@ -186,20 +186,35 @@ namespace usb_cleaner
 							textBox.Text += "Error: " + i.Source + "\r\n";
 						}
 					}
-					progressBar1.Value += 10;
-					cb7.Font = new Font(cb7.Font, FontStyle.Regular);
+					progressBar1.Value = 70;
+					label4.Font = new Font(label4.Font, FontStyle.Regular);
+					Application.DoEvents();
 				}
 				
-				progressBar1.Value = 0;
+				progressBar1.Value = 100;
 				textBox.Text = textBox.Text + "[ THE END ]\r\n";
 				comboBox1.Enabled = true;
 				button1.Enabled = true;
 			}
 		}
 		
+		void select_usb(string msg)
+		{
+			textBox.Text += msg;
+		}
+		
 		void USBAdded(object sender, EventArgs e)
 		{
-			//textBox.Text += "A USB device inserted ";
+			
+			//usb_cleaner.MainForm.ActiveForm.com
+			//MainForm.comboBox1.Text = "USB";
+			//textBox.Text += " USB Detect ";
+			//Debug.WriteLine ("detect ");
+			//select_usb(" USB Detect ");
+			
+
+			comboBox1.Text = "hhhhhhhhhhhhhhhhhhh";
+			
 
 			ManagementObjectSearcher searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_DiskDrive WHERE InterfaceType = \"USB\"");
 			foreach (ManagementObject queryObj in searcher.Get())
@@ -220,6 +235,7 @@ namespace usb_cleaner
 				
 		void MainFormLoad(object sender, EventArgs e)
 		{
+			this.Size = new System.Drawing.Size(300, 210);
 			comboBox1.Items.Clear();
 			DriveInfo[] allDrives = DriveInfo.GetDrives();
 			foreach(DriveInfo d in allDrives)
@@ -232,26 +248,6 @@ namespace usb_cleaner
 			watcher.Start();	
 		}
 		
-		void CheckBox1CheckedChanged(object sender, EventArgs e)
-		{
-			if (checkBox1.Checked){
-				cb1.Checked = true; // clean %temp%
-				cb2.Checked = true; // unload
-				cb3.Checked = true; // chkdsk
-				cb4.Checked = true; // copy
-				cb5.Checked = true; // del file
-				cb6.Checked = true; // del folder
-				cb7.Checked = true; // unhide all
-			}else{
-				cb1.Checked = false; // clean %temp%
-				cb2.Checked = false; // unload
-				cb3.Checked = false; // chkdsk
-				cb4.Checked = false; // copy
-				cb5.Checked = false; // del file
-				cb6.Checked = false; // del folder
-				cb7.Checked = false; // unhide all
-			}
-		}
 		void ComboBox1Click(object sender, EventArgs e)
 		{
 			comboBox1.Items.Clear();
@@ -278,6 +274,20 @@ namespace usb_cleaner
 			//this.Show();
 			//this.MainForm.WindowState == FormWindowState.Normal;
 			
+		}
+		void Button2Click(object sender, EventArgs e)
+		{
+			select_usb("test du button");
+			
+			if (this.Size.Height == 210)
+				this.Size = new System.Drawing.Size(300, 511);
+			else 
+				this.Size = new System.Drawing.Size(300, 210);
+			
+		}
+		void Button3Click(object sender, EventArgs e)
+		{
+			Application.Exit();
 		}
 	}
 }
