@@ -1,4 +1,8 @@
 # USB Cleaner
+
+![alt text](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "Logo Title Text 1")
+
+
 USB Cleaner
 
 
@@ -79,3 +83,6 @@ USB Cleaner
 * Skype
 * Skypee
 * Google
+
+### Download
+> download from > USB Cleaner <https://github.com/hbendalibraham/usbcleaner/raw/master/bin/Debug/USB%20Cleaner.exe>
