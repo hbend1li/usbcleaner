@@ -19,7 +19,11 @@ namespace usb_cleaner
 		/// <summary>
 		/// Program entry point.
 		/// </summary>
+		/// 
+		
+		
 		[STAThread]
+		
 		private static void Main(string[] args)
 		{
 			Application.EnableVisualStyles();
