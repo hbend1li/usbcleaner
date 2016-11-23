@@ -304,7 +304,7 @@ namespace usb_cleaner
 			this.MaximizeBox = false;
 			this.Name = "MainForm";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-			this.Text = "USB Cleaner v1.0";
+			this.Text = "USB Cleaner build 1";
 			this.MinimumSizeChanged += new System.EventHandler(this.MainFormMinimumSizeChanged);
 			this.Load += new System.EventHandler(this.MainFormLoad);
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
