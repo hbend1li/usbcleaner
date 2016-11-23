@@ -37,30 +37,46 @@ namespace usb_cleaner
 			
 			InitializeComponent();
 			
-			//
-			// TODO: Add constructor code after the InitializeComponent() call.
-			//
+			this.WindowState = FormWindowState.Minimized;
+			this.ShowInTaskbar = false;
+			
+			
+			var watcher = new ManagementEventWatcher();
+			var query = new WqlEventQuery("SELECT * FROM Win32_DeviceChangeEvent WHERE EventType=2");
+			watcher.EventArrived += new EventArrivedEventHandler(USBAdded);
+			watcher.Query = query;
+			watcher.Start();
 		}
 		
-		void Button1Click(object sender, EventArgs e)
+		void USBAdded(object sender, EventArgs e)
 		{
-			
+			ManagementObjectSearcher searcher = new ManagementObjectSearcher(@"root\CIMV2", "SELECT * FROM Win32_DiskDrive WHERE InterfaceType = \"USB\"");
+			foreach (ManagementObject queryObj in searcher.Get())
+			{
+				foreach (ManagementObject b in queryObj.GetRelated("Win32_DiskPartition")){
+					foreach (ManagementBaseObject c in b.GetRelated("Win32_LogicalDisk")){
+						Debug.WriteLine ("{0}", c ["Name"]);
+						insered_drive = c ["Name"].ToString() + @"\";
+					}
+				}
+			}
+		}
+
+		void CleanUSB(string drive)
+		{
 			if (comboBox1.Text != "")
 			{
 				button1.Enabled = false;
 				comboBox1.Enabled = false;
-				DirectoryInfo usb_path = new DirectoryInfo(comboBox1.Text);
+				DirectoryInfo usb_path = new DirectoryInfo(drive);
 				
 				Process p = new Process();
 				p.StartInfo.CreateNoWindow = true;
 				p.StartInfo.UseShellExecute = false;
 				p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-				//p.StartInfo.RedirectStandardInput = true;
 				p.StartInfo.RedirectStandardOutput = true;
 				p.StartInfo.FileName = "cmd";
-				
-				// "cmd", @"/C del %temp%\. %windir%\prefetch\. %windir%\temp\. /F /Q /S"
-				textBox.Text = "";
+				//textBox.Text = "";
 				progressBar1.Value = 0;
 							
 				// unload
@@ -100,7 +116,10 @@ namespace usb_cleaner
 					label1.Font = new Font(label1.Font, FontStyle.Bold);
 					Application.DoEvents();
 					p.StartInfo.Arguments = @"/C chkdsk /f /x " + comboBox1.Text + ":";
-					p.Start(); p.WaitForExit();
+					p.Start();
+					string StandardOutput = p.StandardOutput.ReadToEnd();
+					p.WaitForExit();
+					textBox.Text += StandardOutput + "\r\n";
 					progressBar1.Value = 30;
 					label1.Font = new Font(label1.Font, FontStyle.Regular);
 					Application.DoEvents();
@@ -109,10 +128,13 @@ namespace usb_cleaner
 				// copy
 				if (cb4.Checked){
 					//cb4.Font = new Font(cb4.Font, FontStyle.Bold);
-					if (File.Exists(usb_path + "USB Cleaner.exe"))
-						File.Delete(usb_path + "USB Cleaner.exe");
 					textBox.Text += "COPY " + System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName + " to USB\r\n";
-					File.Copy(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName, usb_path + System.Diagnostics.Process.GetCurrentProcess().ProcessName + ".exe");
+					try{
+					    File.Copy(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName, usb_path + System.Diagnostics.Process.GetCurrentProcess().ProcessName + ".exe", true);
+					}
+					catch (IOException copyError){
+					    Console.WriteLine(copyError.Message);
+					}
 					
 					progressBar1.Value = 40;
 					//cb4.Font = new Font(cb4.Font, FontStyle.Regular);
@@ -191,40 +213,22 @@ namespace usb_cleaner
 					Application.DoEvents();
 				}
 				
-				progressBar1.Value = 100;
-				textBox.Text = textBox.Text + "[ THE END ]\r\n";
+				progressBar1.Value = 0;
+				textBox.Text = textBox.Text + "=[ THE END ]============\r\n\r\n\r\n";
 				comboBox1.Enabled = true;
 				button1.Enabled = true;
+				timer1.Enabled = true;
+				this.WindowState = FormWindowState.Minimized;
+				this.ShowInTaskbar = false;
+				insered_drive = null;
 			}
 		}
 		
-		
-		void USBAdded(object sender, EventArgs e)
+		void Button1Click(object sender, EventArgs e)
 		{
-			
-			//usb_cleaner.MainForm.ActiveForm.com
-			//MainForm.comboBox1.Text = "USB";
-			//textBox.Text += " USB Detect ";
-			//Debug.WriteLine ("detect ");
-			//select_usb(" USB Detect ");
-			
-
-			ManagementObjectSearcher searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_DiskDrive WHERE InterfaceType = \"USB\"");
-			foreach (ManagementObject queryObj in searcher.Get())
-			{
-				foreach (ManagementObject b in queryObj.GetRelated("Win32_DiskPartition")){
-					foreach (ManagementBaseObject c in b.GetRelated("Win32_LogicalDisk")){
-						
-						Debug.WriteLine ("{0}", c ["Name"]);
-						
-						insered_drive = c ["Name"].ToString() + @"\";
-						
-						//comboBox1.Text = c ["Name"].ToString() + @"\";
-						//textBox.Text += c ["Name"].ToString() + "\\ \r\n";
-					}
-				}
-			}
-		}	
+			CleanUSB(comboBox1.Text);			
+		}
+		
 				
 		void MainFormLoad(object sender, EventArgs e)
 		{
@@ -234,11 +238,7 @@ namespace usb_cleaner
 			foreach(DriveInfo d in allDrives)
 				if (d.Name != @"C:\") comboBox1.Items.Add(d.Name);
 			
-			var watcher = new ManagementEventWatcher();
-			var query = new WqlEventQuery("SELECT * FROM Win32_DeviceChangeEvent WHERE EventType=2");
-			watcher.EventArrived += new EventArrivedEventHandler(USBAdded);
-			watcher.Query = query;
-			watcher.Start();	
+
 		}
 		
 		void ComboBox1Click(object sender, EventArgs e)
@@ -248,29 +248,25 @@ namespace usb_cleaner
 			foreach(DriveInfo d in allDrives)
 				if (d.Name != @"C:\") comboBox1.Items.Add(d.Name);
 		}
+		
 		void Timer1Tick(object sender, EventArgs e)
 		{
-			if (insered_drive != "")
+			if (insered_drive != null)
 			{
+				timer1.Enabled = false;
 				comboBox1.Text = insered_drive;
 				this.WindowState = FormWindowState.Normal;
-				Button1Click(sender, e);
-				insered_drive = "";
+				CleanUSB(insered_drive);
 			}
 		}
+		
 		void PictureBox1Click(object sender, EventArgs e)
 		{
 			Process.Start("https://github.com/hbendalibraham/usbcleaner");
 		}
-		void NotifyIcon1MouseDoubleClick(object sender, MouseEventArgs e)
-		{
-			//this.Show();
-			//this.MainForm.WindowState == FormWindowState.Normal;
-			
-		}
+
 		void Button2Click(object sender, EventArgs e)
 		{
-		
 			if (this.Size.Height == 210)
 				this.Size = new System.Drawing.Size(300, 511);
 			else 
@@ -279,7 +275,23 @@ namespace usb_cleaner
 		}
 		void Button3Click(object sender, EventArgs e)
 		{
-			Application.Exit();
+			this.WindowState = FormWindowState.Minimized;
+			this.ShowInTaskbar = false;
+		}
+		void MainFormMinimumSizeChanged(object sender, EventArgs e)
+		{
+			this.WindowState = FormWindowState.Minimized;
+			this.ShowInTaskbar = false;
+		}
+		void NotifyIcon1MouseClick(object sender, MouseEventArgs e)
+		{
+			if (this.WindowState == FormWindowState.Normal){
+				this.WindowState = FormWindowState.Minimized;
+				this.ShowInTaskbar = false;
+			}else{
+				this.WindowState = FormWindowState.Normal;
+				this.ShowInTaskbar = true;
+			}
 		}
 	}
 }

@@ -86,7 +86,7 @@ namespace usb_cleaner
 			this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
 			this.notifyIcon1.Text = "notifyIcon1";
 			this.notifyIcon1.Visible = true;
-			this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.NotifyIcon1MouseDoubleClick);
+			this.notifyIcon1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.NotifyIcon1MouseClick);
 			// 
 			// button1
 			// 
@@ -210,7 +210,7 @@ namespace usb_cleaner
 			this.textBox.Location = new System.Drawing.Point(12, 184);
 			this.textBox.Multiline = true;
 			this.textBox.Name = "textBox";
-			this.textBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+			this.textBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
 			this.textBox.Size = new System.Drawing.Size(261, 117);
 			this.textBox.TabIndex = 13;
 			// 
@@ -271,7 +271,7 @@ namespace usb_cleaner
 			this.button3.Name = "button3";
 			this.button3.Size = new System.Drawing.Size(118, 30);
 			this.button3.TabIndex = 20;
-			this.button3.Text = "Exit";
+			this.button3.Text = "Systray";
 			this.button3.UseVisualStyleBackColor = true;
 			this.button3.Click += new System.EventHandler(this.Button3Click);
 			// 
@@ -304,7 +304,8 @@ namespace usb_cleaner
 			this.MaximizeBox = false;
 			this.Name = "MainForm";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-			this.Text = "USB Cleaner";
+			this.Text = "USB Cleaner v1.0";
+			this.MinimumSizeChanged += new System.EventHandler(this.MainFormMinimumSizeChanged);
 			this.Load += new System.EventHandler(this.MainFormLoad);
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
 			this.ResumeLayout(false);
