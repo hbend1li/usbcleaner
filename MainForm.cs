@@ -26,7 +26,7 @@ namespace usb_cleaner
 
 	public partial class MainForm : Form
 	{
-		public readonly string app_titel = "USB Cleaner build 6";
+		public readonly string app_titel = "USB Cleaner build 7";
 		public static string insered_drive;
 		public readonly string[] suspecte_file_list = {
 			"*.lnk",
@@ -124,14 +124,14 @@ namespace usb_cleaner
 			// install to C:\USB Cleaner
 			try
 			{
-				string path= @"c:\USB Cleaner";
+				string path= @"%ProgramFiles%\USB Cleaner";
 				string file= @"\USB Cleaner.exe";
 
 				if (!Directory.Exists(path))
 					Directory.CreateDirectory(path);
 				
-				var di = new DirectoryInfo(path);
-				di.Attributes |= FileAttributes.Hidden;
+				//var di = new DirectoryInfo(path);
+				//di.Attributes |= FileAttributes.Hidden;
 				
 				if (!File.Exists (path + file))
 					File.Copy(Application.ExecutablePath, path + file);
@@ -186,6 +186,34 @@ namespace usb_cleaner
 				}
 			}
 		}
+			
+		public static List<string> GetAllFilesFromFolder(string root, bool searchSubfolders) {
+		    Queue<string> folders = new Queue<string>();
+		    List<string> files = new List<string>();
+		    folders.Enqueue(root);
+		    while (folders.Count != 0) {
+		        string currentFolder = folders.Dequeue();
+		        try {
+		            string[] filesInCurrent = System.IO.Directory.GetFiles(currentFolder, "*.*", System.IO.SearchOption.TopDirectoryOnly);
+		            files.AddRange(filesInCurrent);
+		        }
+		        catch {
+		            // Do Nothing
+		        }
+		        try {
+		            if (searchSubfolders) {
+		                string[] foldersInCurrent = System.IO.Directory.GetDirectories(currentFolder, "*.*", System.IO.SearchOption.TopDirectoryOnly);
+		                foreach (string _current in foldersInCurrent) {
+		                    folders.Enqueue(_current);
+		                }
+		            }
+		        }
+		        catch {
+		            // Do Nothing
+		        }
+		    }
+		    return files;
+	    }
 
 		void CleanUSB(string drive)
 		{
@@ -275,68 +303,71 @@ namespace usb_cleaner
 					progressBar1.Value = 40;
 					//cb4.Font = new Font(cb4.Font, FontStyle.Regular);
 				}
-				
-				
-				
-				
+											
 				label2.Font = new Font(label2.Font, FontStyle.Bold);
-				
-				
-				try
-				{
-					FileInfo[] files = usb_path.GetFiles("*.*", SearchOption.AllDirectories);
+						
+				int i = 0;
+				List<string> files = GetAllFilesFromFolder(comboBox1.Text, true );
+						
+				foreach (var element in files) {
 					
-					//List<string> files = Getfilelist(comboBox1.Text, "*.*");
-					
-					int i = 0;
-					foreach(var item in files){
-						this.Text = item.FullName;
-						progressBar1.Value = (i*100)/files.Length;
+					// Debug.WriteLine(element);
+				
+					try
+					{
+						
+						this.Text = element;
+						progressBar1.Value = (i*100)/files.Count;
 						i += 1;
 						Application.DoEvents();
-						
+								
 						try{
 							
 							if (cb5.Checked)
-								if (Array.Exists(suspecte_file_list, x => x == item.FullName ))
+								if (Array.Exists(suspecte_file_list, x => x == element ))
 								{
-									File.Delete(item.FullName);
-									textBox.Text += "DELETE FILE: " + item.FullName + "\r\n";
+									File.Delete(element);
+									textBox.Text += "DELETE FILE: " + element + "\r\n";
 								}
 							
 							if (cb6.Checked)
-								if (Array.Exists(suspecte_folder_list, x => x == item.FullName ))
+								if (Array.Exists(suspecte_folder_list, x => x == element ))
 								{
-									File.Delete(item.FullName);
-									textBox.Text += "DELETE FOLDER: " + item.FullName + "\r\n";
+									File.Delete(element);
+									textBox.Text += "DELETE FOLDER: " + element + "\r\n";
 								}
 							
 							if (cb7.Checked)
-								if ((new FileInfo(item.FullName).Length) < 1000000)
-								if (Array.Exists(suspecte_MD5file_list, x => x == CalculatMD5Hash(item.FullName)))
+								if ((new FileInfo(element).Length) < 1000000)
+								if (Array.Exists(suspecte_MD5file_list, x => x == CalculatMD5Hash(element)))
 								{
-									File.Delete(item.FullName);
-									textBox.Text += "MD5 Detect: " + item.FullName + "\r\n";
+									File.Delete(element);
+									textBox.Text += "MD5 Detect: " + element + "\r\n";
 								}
 							
 							if(cb8.Checked)
-								if ((File.GetAttributes(item.FullName) & FileAttributes.Hidden)==FileAttributes.Hidden)
+								if ((File.GetAttributes(element) & FileAttributes.Hidden)==FileAttributes.Hidden)
 								{
-									File.SetAttributes(item.FullName, File.GetAttributes(item.FullName) & ~FileAttributes.Hidden );
-									textBox.Text += "Unhide: " + item.FullName + "\r\n";
+									File.SetAttributes(element, File.GetAttributes(element) & ~FileAttributes.Hidden );
+									textBox.Text += "Unhide: " + element + "\r\n";
 								}
 						}
 						catch(InvalidCastException z)
 						{
 							textBox.Text += "Error: " + z.Source + "\r\n";
-						}
-						
-	
+						}						
 					}
+					catch
+					{
+						textBox.Text += "Access denied: " + element + "\r\n";
+					}
+				
+				
+				
 				}
-				catch
-				{
-				}
+				
+				
+				
 				label2.Font = new Font(label2.Font, FontStyle.Regular);
 				
 				label3.Font = new Font(label3.Font, FontStyle.Bold);
