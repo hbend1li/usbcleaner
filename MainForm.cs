@@ -26,6 +26,7 @@ namespace usb_cleaner
 
 	public partial class MainForm : Form
 	{
+		public readonly string app_titel = "USB Cleaner build 6";
 		public static string insered_drive;
 		public readonly string[] suspecte_file_list = {
 			"*.lnk",
@@ -97,7 +98,7 @@ namespace usb_cleaner
 		};
 		
 		public readonly string[] suspecte_MD5file_list = {
-			"08c5ed1731fde99dcf34019529d01381",//:      :eicar.txt virus test
+			"08c5ed1731fde99dcf34019529d01381",//::eicar.txt virus test
 			"ce61092591917a1a0b658dd347db59d7",//:224256:BackDoor.IRC.NgrBot.42
 			"5094afba53d17c0f36d79feecd64c98c",//:789230:HEUR.Trojan-Downloader.Script.Generic
 			"d1ab72db2bedd2f255d35da3da0d4b16",//:141824:runsc.exe
@@ -116,6 +117,7 @@ namespace usb_cleaner
 			
 			InitializeComponent();
 			
+			this.Text = app_titel;
 			this.WindowState = FormWindowState.Minimized;
 			this.ShowInTaskbar = false;
 			
@@ -187,6 +189,7 @@ namespace usb_cleaner
 
 		void CleanUSB(string drive)
 		{
+			label3.Font = new Font(label3.Font, FontStyle.Regular);
 			if (comboBox1.Text != "")
 			{
 				button1.Enabled = false;
@@ -273,118 +276,75 @@ namespace usb_cleaner
 					//cb4.Font = new Font(cb4.Font, FontStyle.Regular);
 				}
 				
-	
-				
-				// delete suspect file
-				if (cb5.Checked){
-					textBox.Text += "Suspect FILE: \r\n";
-					label2.Font = new Font(label2.Font, FontStyle.Bold);
-					Application.DoEvents();
-					foreach(var suspected_file in suspecte_file_list){
-						FileInfo[] files = usb_path.GetFiles(suspected_file, SearchOption.AllDirectories);
-						foreach(var item in files){
-							try{
-								File.Delete(item.FullName);
-								textBox.Text += "DELETE FILE " + item.FullName + "\r\n";
-							}
-							catch(InvalidCastException i)
-							{
-								textBox.Text += "Error: " + i.Source + "\r\n";
-							}
-							
-						}
-					}
-					progressBar1.Value = 50;
-					label2.Font = new Font(label2.Font, FontStyle.Regular);
-					Application.DoEvents();
-				}
 				
 				
-	
-				// delete suspect folder
-				if (cb6.Checked){
-					textBox.Text += "Suspect DIR: \r\n";					
-					label3.Font = new Font(label3.Font, FontStyle.Bold);
-					Application.DoEvents();
-					foreach(var suspected_folder in suspecte_folder_list){
-						FileInfo[] folders = usb_path.GetFiles(suspected_folder, SearchOption.AllDirectories);
-						foreach(var item in folders){
-							try{
-								File.Delete(item.FullName);
-								textBox.Text += "DELETE FOLDER" + item.FullName + "\r\n";	
-							}
-							catch(InvalidCastException i)
-							{
-								textBox.Text += "Error: " + i.Source + "\r\n";
-							}
-							
-						}
-					}
-					progressBar1.Value = 60;
-					label3.Font = new Font(label3.Font, FontStyle.Regular);
-					Application.DoEvents();
+				
+				label2.Font = new Font(label2.Font, FontStyle.Bold);
+				
+				
+				try
+				{
+					FileInfo[] files = usb_path.GetFiles("*.*", SearchOption.AllDirectories);
 					
-				}
-				
-				if (cb7.Checked){
+					//List<string> files = Getfilelist(comboBox1.Text, "*.*");
 					
-					textBox.Text += "MD5: \r\n";					
-					label2.Font = new Font(label2.Font, FontStyle.Bold);
-					Application.DoEvents();					
-
-					FileInfo[] MD5files = usb_path.GetFiles("*.*", SearchOption.AllDirectories);
-					foreach(var item in MD5files){
-						if ((new FileInfo(item.FullName).Length) < 1000000)
-						{
-							textBox.Text += item.FullName;
-							//Debug.WriteLine(":" + CalculatMD5Hash(item.FullName));
-							try{
+					int i = 0;
+					foreach(var item in files){
+						this.Text = item.FullName;
+						progressBar1.Value = (i*100)/files.Length;
+						i += 1;
+						Application.DoEvents();
+						
+						try{
+							
+							if (cb5.Checked)
+								if (Array.Exists(suspecte_file_list, x => x == item.FullName ))
+								{
+									File.Delete(item.FullName);
+									textBox.Text += "DELETE FILE: " + item.FullName + "\r\n";
+								}
+							
+							if (cb6.Checked)
+								if (Array.Exists(suspecte_folder_list, x => x == item.FullName ))
+								{
+									File.Delete(item.FullName);
+									textBox.Text += "DELETE FOLDER: " + item.FullName + "\r\n";
+								}
+							
+							if (cb7.Checked)
+								if ((new FileInfo(item.FullName).Length) < 1000000)
 								if (Array.Exists(suspecte_MD5file_list, x => x == CalculatMD5Hash(item.FullName)))
 								{
 									File.Delete(item.FullName);
-									textBox.Text += "------------[ fond ]";
+									textBox.Text += "MD5 Detect: " + item.FullName + "\r\n";
 								}
-							}
-							catch(InvalidCastException i)
-							{
-								textBox.Text += "------------[ Err :" + i.Source + " ]";
-							}
-							textBox.Text += "\r\n";
-							Application.DoEvents();
+							
+							if(cb8.Checked)
+								if ((File.GetAttributes(item.FullName) & FileAttributes.Hidden)==FileAttributes.Hidden)
+								{
+									File.SetAttributes(item.FullName, File.GetAttributes(item.FullName) & ~FileAttributes.Hidden );
+									textBox.Text += "Unhide: " + item.FullName + "\r\n";
+								}
 						}
-					}
-
-					progressBar1.Value = 70;
-					label2.Font = new Font(label2.Font, FontStyle.Regular);
-					Application.DoEvents();
-				}
-				
-				
-				// unhide all
-				if (cb8.Checked){
-					textBox.Text += "Unhide FILE: \r\n";
-					label4.Font = new Font(label4.Font, FontStyle.Bold);
-					Application.DoEvents();
-					FileInfo[] unhide_files = usb_path.GetFiles("*.*", SearchOption.AllDirectories);
-					foreach(var item in unhide_files){
-						try{
-							if ((File.GetAttributes(item.FullName) & FileAttributes.Hidden)==FileAttributes.Hidden)
-							{
-								File.SetAttributes(item.FullName, File.GetAttributes(item.FullName) & ~FileAttributes.Hidden );
-								textBox.Text = textBox.Text + item.FullName + "\r\n";
-							}
-						}
-						catch(InvalidCastException i)
+						catch(InvalidCastException z)
 						{
-							textBox.Text += "Error: " + i.Source + "\r\n";
+							textBox.Text += "Error: " + z.Source + "\r\n";
 						}
+						
+	
 					}
-					progressBar1.Value = 80;
-					label4.Font = new Font(label4.Font, FontStyle.Regular);
-					Application.DoEvents();
 				}
+				catch
+				{
+				}
+				label2.Font = new Font(label2.Font, FontStyle.Regular);
+				
+				label3.Font = new Font(label3.Font, FontStyle.Bold);
+				
+				
 				
 				progressBar1.Value = 0;
+				this.Text = app_titel;
 				textBox.Text = textBox.Text + "=[ THE END ]============\r\n\r\n\r\n";
 				comboBox1.Enabled = true;
 				button1.Enabled = true;
