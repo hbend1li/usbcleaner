@@ -3,7 +3,7 @@
 ![alt text](https://github.com/hbendalibraham/usbcleaner/raw/master/screenshot/Capture.PNG "Logo Title Text 1")
 
 
-USB Cleaner
+> Auto install on **C:\USB Cleaner\ **
 
 
 

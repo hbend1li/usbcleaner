@@ -86,7 +86,7 @@ namespace usb_cleaner
 			// notifyIcon1
 			// 
 			this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
-			this.notifyIcon1.Text = "notifyIcon1";
+			this.notifyIcon1.Text = "USB Cleaner";
 			this.notifyIcon1.Visible = true;
 			this.notifyIcon1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.NotifyIcon1MouseClick);
 			// 
@@ -153,7 +153,7 @@ namespace usb_cleaner
 			// 
 			this.pictureBox1.Cursor = System.Windows.Forms.Cursors.Hand;
 			this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
-			this.pictureBox1.Location = new System.Drawing.Point(12, 76);
+			this.pictureBox1.Location = new System.Drawing.Point(3, 85);
 			this.pictureBox1.Name = "pictureBox1";
 			this.pictureBox1.Size = new System.Drawing.Size(158, 86);
 			this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -320,7 +320,7 @@ namespace usb_cleaner
 			this.MaximizeBox = false;
 			this.Name = "MainForm";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-			this.Text = "USB Cleaner build 2";
+			this.Text = "USB Cleaner build 5";
 			this.MinimumSizeChanged += new System.EventHandler(this.MainFormMinimumSizeChanged);
 			this.Load += new System.EventHandler(this.MainFormLoad);
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();

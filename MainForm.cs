@@ -97,7 +97,15 @@ namespace usb_cleaner
 		};
 		
 		public readonly string[] suspecte_MD5file_list = {
-			"08c5ed1731fde99dcf34019529d01381", // eicar.txt virus test
+			"08c5ed1731fde99dcf34019529d01381",//:      :eicar.txt virus test
+			"ce61092591917a1a0b658dd347db59d7",//:224256:BackDoor.IRC.NgrBot.42
+			"5094afba53d17c0f36d79feecd64c98c",//:789230:HEUR.Trojan-Downloader.Script.Generic
+			"d1ab72db2bedd2f255d35da3da0d4b16",//:141824:runsc.exe
+			"902a52357b522df16adb57a1222a5db6",//:669:Trojan.WinLNK.Agent.jb
+			"9e267f980ca27799369497d6831779ae",//:32768:04
+			"a2fecccd2f987f4463b598a1ee6bc5c3",//:393208:Worm.VBS.Agent.ft
+			"84a5746202decee74d907a37015a01d4",//:136505:googleupdate.a3x
+			"76d8da3d285176a523e605dc5b9e7bef",//:347648:Photo03.scr			
 		};
 		
 		public MainForm()
@@ -111,7 +119,31 @@ namespace usb_cleaner
 			this.WindowState = FormWindowState.Minimized;
 			this.ShowInTaskbar = false;
 			
-			// restore setting	
+			// install to C:\USB Cleaner
+			try
+			{
+				string path= @"c:\USB Cleaner";
+				string file= @"\USB Cleaner.exe";
+
+				if (!Directory.Exists(path))
+					Directory.CreateDirectory(path);
+				
+				var di = new DirectoryInfo(path);
+				di.Attributes |= FileAttributes.Hidden;
+				
+				if (!File.Exists (path + file))
+					File.Copy(Application.ExecutablePath, path + file);
+
+				Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run\", true);
+				key.SetValue("USB Cleaner", path + file);
+				
+			}
+			catch
+			{
+				textBox.Text += "Field to install !!!\r\n\r\n";
+			}
+			
+			// restore setting
 			
 			
 			var watcher = new ManagementEventWatcher();
@@ -120,6 +152,7 @@ namespace usb_cleaner
 			watcher.Query = query;
 			watcher.Start();
 		}
+		
 		
 		public string CalculatMD5Hash(string CalculatMD5Hash)
 		{
@@ -162,6 +195,7 @@ namespace usb_cleaner
 				if (this.WindowState == FormWindowState.Minimized)
 				{
 					this.WindowState = FormWindowState.Normal;
+					this.ShowInTaskbar = true;
 					hide = true;
 				}
 				DirectoryInfo usb_path = new DirectoryInfo(drive);
@@ -229,7 +263,7 @@ namespace usb_cleaner
 					//cb4.Font = new Font(cb4.Font, FontStyle.Bold);
 					//textBox.Text += "COPY " + System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName + " to USB\r\n";
 					try{
-					    File.Copy(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName, usb_path + System.Diagnostics.Process.GetCurrentProcess().ProcessName + ".exe", true);
+					    File.Copy(Application.ExecutablePath, usb_path + @"\USB Cleaner.exe", true);
 					}
 					catch (IOException copyError){
 					    Console.WriteLine(copyError.Message);
@@ -307,7 +341,7 @@ namespace usb_cleaner
 							try{
 								if (Array.Exists(suspecte_MD5file_list, x => x == CalculatMD5Hash(item.FullName)))
 								{
-									//File.Delete(item.FullName);
+									File.Delete(item.FullName);
 									textBox.Text += "------------[ fond ]";
 								}
 							}
@@ -358,6 +392,7 @@ namespace usb_cleaner
 				if (hide)
 				{
 					this.WindowState = FormWindowState.Minimized;
+					this.ShowInTaskbar = false;
 				}
 				//this.ShowInTaskbar = false;
 				insered_drive = null;
