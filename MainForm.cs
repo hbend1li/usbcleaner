@@ -28,6 +28,7 @@ namespace usb_cleaner
 	{
 		public readonly string app_titel = "USB Cleaner build 10";
 		public static string insered_drive;
+		public static bool scan = false;
 		public readonly string[] suspecte_file_list = {
 			"*.lnk",
 			"~$*.*",
@@ -120,33 +121,23 @@ namespace usb_cleaner
 			
 			this.Text = app_titel;
 			
-			//this.WindowState = FormWindowState.Minimized;
-			//this.ShowInTaskbar = false;
-			Hide();
+			this.WindowState = FormWindowState.Minimized;
+			this.ShowInTaskbar = false;
+			//Hide();
 			
 			// install to C:\USB Cleaner
 			try
 			{
-				string path= @"%ProgramFiles%\USB Cleaner";
-				string file= @"\USB Cleaner.exe";
-
-				if (!Directory.Exists(path))
-					Directory.CreateDirectory(path);
+				if (!Directory.Exists(@"C:\USB Cleaner"))
+					Directory.CreateDirectory(@"C:\USB Cleaner");
 				
-				//var di = new DirectoryInfo(path);
-				//di.Attributes |= FileAttributes.Hidden;
-				
-				if (!File.Exists (path + file))
-					File.Copy(Application.ExecutablePath, path + file);
+				if (!File.Exists (@"C:\USB Cleaner\USB Cleaner.exe"))
+					File.Copy(Application.ExecutablePath, @"C:\USB Cleaner\USB Cleaner.exe");
 
 				Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run\", true);
-				key.SetValue("USB Cleaner", path + file);
+				key.SetValue("USB Cleaner", @"C:\USB Cleaner\USB Cleaner.exe");
 				
-			}
-			catch
-			{
-				textBox.Text += "Field to install !!!\r\n\r\n";
-			}
+			}catch{ textBox.Text += "Field to install !!!\r\n\r\n"; }
 			
 			// restore setting
 			
@@ -223,14 +214,14 @@ namespace usb_cleaner
 			label3.Font = new Font(label3.Font, FontStyle.Regular);
 			if (comboBox1.Text != "")
 			{
-				button1.Enabled = false;
+				button1.Text = "Stop";
 				comboBox1.Enabled = false;
 				bool hide = false;
 				if (this.WindowState == FormWindowState.Minimized)
 				{
-					//this.ShowInTaskbar = true;
-					//this.WindowState = FormWindowState.Normal;
-					Show();
+					this.ShowInTaskbar = true;
+					this.WindowState = FormWindowState.Normal;
+					//Show();
 					hide = true;
 				}
 				DirectoryInfo usb_path = new DirectoryInfo(drive);
@@ -315,55 +306,50 @@ namespace usb_cleaner
 						
 				foreach (var element in files) {
 					
-					// Debug.WriteLine(element);
-				
-					try
-					{
-						
-						this.Text = element;
-						progressBar1.Value = (i*100)/files.Count;
-						i += 1;
-						Application.DoEvents();
-								
-						try{
+					this.Text = element;
+					progressBar1.Value = (i*100)/files.Count;
+					i += 1;
+					Application.DoEvents();
 							
-							if (cb5.Checked)
-								if (Array.Exists(suspecte_file_list, x => x == element ))
-								{
-									File.Delete(element);
-									textBox.Text += "DELETE FILE: " + element + "\r\n";
-								}
-							
-							if (cb6.Checked)
-								if (Array.Exists(suspecte_folder_list, x => x == element ))
-								{
-									File.Delete(element);
-									textBox.Text += "DELETE FOLDER: " + element + "\r\n";
-								}
-							
-							if (cb7.Checked)
-								if ((new FileInfo(element).Length) < 1000000)
-								if (Array.Exists(suspecte_MD5file_list, x => x == CalculatMD5Hash(element)))
-								{
-									File.Delete(element);
-									textBox.Text += "MD5 Detect: " + element + "\r\n";
-								}
-							
-							if(cb8.Checked)
-								if ((File.GetAttributes(element) & FileAttributes.Hidden)==FileAttributes.Hidden)
-								{
-									File.SetAttributes(element, File.GetAttributes(element) & ~FileAttributes.Hidden );
-									textBox.Text += "Unhide: " + element + "\r\n";
-								}
-						}
-						catch(InvalidCastException z)
-						{
-							textBox.Text += "Error: " + z.Source + "\r\n";
-						}						
+					if (button1.Text !="Stop"){
+						textBox.Text += "SCAN stoped by user\r\n";
+						break;
 					}
-					catch
+					
+					try
+					{	
+						if (cb5.Checked)
+							if (Array.Exists(suspecte_file_list, x => x == element ))
+							{
+								File.Delete(element);
+								textBox.Text += "DELETE FILE: " + element + "\r\n";
+							}
+						
+						if (cb6.Checked)
+							if (Array.Exists(suspecte_folder_list, x => x == element ))
+							{
+								File.Delete(element);
+								textBox.Text += "DELETE FOLDER: " + element + "\r\n";
+							}
+						
+						if (cb7.Checked)
+							if ((new FileInfo(element).Length) < 1000000)
+							if (Array.Exists(suspecte_MD5file_list, x => x == CalculatMD5Hash(element)))
+							{
+								File.Delete(element);
+								textBox.Text += "MD5 Detect: " + element + "\r\n";
+							}
+						
+						if(cb8.Checked)
+							if ((File.GetAttributes(element) & FileAttributes.Hidden)==FileAttributes.Hidden)
+							{
+								File.SetAttributes(element, File.GetAttributes(element) & ~FileAttributes.Hidden );
+								textBox.Text += "Unhide: " + element + "\r\n";
+							}
+					}
+					catch(InvalidCastException z)
 					{
-						textBox.Text += "Access denied: " + element + "\r\n";
+						textBox.Text += "Error: " + z.Source + "\r\n";
 					}
 				}
 				
@@ -376,11 +362,12 @@ namespace usb_cleaner
 				this.Text = app_titel;
 				textBox.Text = textBox.Text + "=[ THE END ]============\r\n\r\n\r\n";
 				comboBox1.Enabled = true;
-				button1.Enabled = true;
+				button1.Text = "Clean";
 				timer1.Enabled = true;
 				if (hide)
 				{
-					Hide();
+					this.WindowState = FormWindowState.Minimized;
+					this.ShowInTaskbar = false;
 				}
 				insered_drive = null;
 			}
@@ -388,7 +375,12 @@ namespace usb_cleaner
 		
 		void Button1Click(object sender, EventArgs e)
 		{
-			CleanUSB(comboBox1.Text);			
+			if (button1.Text == "Clean")
+			{
+				CleanUSB(comboBox1.Text);
+			}else{
+				button1.Text = "Clean";
+			}
 		}
 				
 		void MainFormLoad(object sender, EventArgs e)
@@ -398,6 +390,8 @@ namespace usb_cleaner
 			DriveInfo[] allDrives = DriveInfo.GetDrives();
 			foreach(DriveInfo d in allDrives)
 				if (d.Name != @"C:\") comboBox1.Items.Add(d.Name);
+			
+			
 		}
 		
 		void ComboBox1Click(object sender, EventArgs e)
@@ -438,7 +432,9 @@ namespace usb_cleaner
 		}
 		void NotifyIcon1MouseClick(object sender, MouseEventArgs e)
 		{
-			Show();
+			//Show();
+			this.WindowState = FormWindowState.Normal;
+			this.ShowInTaskbar = true;
 		}
 		void TextBoxDoubleClick(object sender, EventArgs e)
 		{
@@ -447,7 +443,8 @@ namespace usb_cleaner
 		void MainFormFormClosing(object sender, FormClosingEventArgs e)
 		{
 			e.Cancel = true;
-			Hide();
+			this.WindowState = FormWindowState.Minimized;
+			this.ShowInTaskbar = false;
 		}
 	}
 }
