@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
 using System.Management;
+using System.Security.Cryptography;
 
 namespace usb_cleaner
 {
@@ -26,8 +27,78 @@ namespace usb_cleaner
 	public partial class MainForm : Form
 	{
 		public static string insered_drive;
-		public readonly string[] suspecte_file_list = {"*.lnk","~$*.*","*.a3x","*.tmp","*.qgb","auto.exe","autoit3.exe","autorun.ini","autorun.inf","autorun.pif","autorun.exe","autorun.bat","autorun.cmd","autorun.hta","avpo.exe","BOOTEX.log","ctfmon.exe","copy.exe","file*.chk","host.exe","Heap41a","host.exe","imvo.exe","IndexerVolumeGuid","just.exe","Macromedia_Setup.exe","Microsoft.exe","mscalc.exe","msvcr71.dl","My Pictures.lnk","notepad.vbe","ntde1ect.com","nideiect.com","ntdelect.com","Nouveau dossier.lnk","New Folder.exe","New Folder","Nouveau.exe","oso.exe","Porn.exe","Ravmon.exe","RavMonE.exe","RVHost.exe","spoclsv.exe","showmyhey.exe","soundmix.exe","semo2X.exe","Thumbs.db","utdetect.com","VBS_RESULOWS.A","windows.scr","x.mpeg"};
-		public readonly string[] suspecte_folder_list = {"System Volume Information","RECYCLER","RECYCLED","$Recycler","$RECYCLE.BIN","$RECYCLEBIN","My Pictures","FILE.*","FOUND.*","Skype","Skypee","Google"};
+		public readonly string[] suspecte_file_list = {
+			"*.lnk",
+			"~$*.*",
+			"*.a3x",
+			"*.tmp",
+			"*.qgb",
+			"auto.exe",
+			"autoit3.exe",
+			"autorun.ini",
+			"autorun.inf",
+			"autorun.pif",
+			"autorun.exe",
+			"autorun.bat",
+			"autorun.cmd",
+			"autorun.hta",
+			"avpo.exe",
+			"BOOTEX.log",
+			"ctfmon.exe",
+			"copy.exe",
+			"file*.chk",
+			"host.exe",
+			"Heap41a",
+			"host.exe",
+			"imvo.exe",
+			"IndexerVolumeGuid",
+			"just.exe",
+			"Macromedia_Setup.exe",
+			"Microsoft.exe",
+			"mscalc.exe",
+			"msvcr71.dl",
+			"My Pictures.lnk",
+			"notepad.vbe",
+			"ntde1ect.com",
+			"nideiect.com",
+			"ntdelect.com",
+			"Nouveau dossier.lnk",
+			"New Folder.exe",
+			"New Folder",
+			"Nouveau.exe",
+			"oso.exe",
+			"Porn.exe",
+			"Ravmon.exe",
+			"RavMonE.exe",
+			"RVHost.exe",
+			"spoclsv.exe",
+			"showmyhey.exe",
+			"soundmix.exe",
+			"semo2X.exe",
+			"Thumbs.db",
+			"utdetect.com",
+			"VBS_RESULOWS.A",
+			"windows.scr",
+			"x.mpeg"
+		};
+		public readonly string[] suspecte_folder_list = {
+			"System Volume Information",
+			"RECYCLER",
+			"RECYCLED",
+			"$Recycler",
+			"$RECYCLE.BIN",
+			"$RECYCLEBIN",
+			"My Pictures",
+			"FILE.*",
+			"FOUND.*",
+			"Skype",
+			"Skypee",
+			"Google"
+		};
+		
+		public readonly string[] suspecte_MD5file_list = {
+			"08c5ed1731fde99dcf34019529d01381", // eicar.txt virus test
+		};
 		
 		public MainForm()
 		{
@@ -40,12 +111,31 @@ namespace usb_cleaner
 			this.WindowState = FormWindowState.Minimized;
 			this.ShowInTaskbar = false;
 			
+			// restore setting	
+			
 			
 			var watcher = new ManagementEventWatcher();
 			var query = new WqlEventQuery("SELECT * FROM Win32_DeviceChangeEvent WHERE EventType=2");
 			watcher.EventArrived += new EventArrivedEventHandler(USBAdded);
 			watcher.Query = query;
 			watcher.Start();
+		}
+		
+		public string CalculatMD5Hash(string CalculatMD5Hash)
+		{
+			//using (var md5 = MD5.Create())
+			//:	return md5.ComputeHash(File.ReadAllBytes(filename)).toString();
+			
+  			// MD5 Hash
+			MD5 md5 = MD5.Create();
+			byte[] hash = md5.ComputeHash(File.ReadAllBytes(CalculatMD5Hash));
+			string sb = null;
+			for (int i = 0; i< hash.Length; i++)
+			{
+				sb += hash[i].ToString("X2");
+			}
+			return sb.ToLower();
+
 		}
 		
 		void USBAdded(object sender, EventArgs e)
@@ -68,6 +158,12 @@ namespace usb_cleaner
 			{
 				button1.Enabled = false;
 				comboBox1.Enabled = false;
+				bool hide = false;
+				if (this.WindowState == FormWindowState.Minimized)
+				{
+					this.WindowState = FormWindowState.Normal;
+					hide = true;
+				}
 				DirectoryInfo usb_path = new DirectoryInfo(drive);
 				
 				Process p = new Process();
@@ -76,11 +172,11 @@ namespace usb_cleaner
 				p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 				p.StartInfo.RedirectStandardOutput = true;
 				p.StartInfo.FileName = "cmd";
-				//textBox.Text = "";
 				progressBar1.Value = 0;
 							
 				// unload
 				if (cb1.Checked){
+					textBox.Text += "Task KILL: \r\n";
 					//cb1.Font = new Font(cb1.Font, FontStyle.Bold);
 					p.StartInfo.Arguments = @"/C taskkill /im wscript.exe /f /t";
 					p.Start(); p.WaitForExit();
@@ -104,6 +200,7 @@ namespace usb_cleaner
 				
 				// clean %temp%
 				if (cb2.Checked){
+					textBox.Text += "Delete TMP: \r\n";
 					//cb2.Font = new Font(cb2.Font, FontStyle.Bold);
 					p.StartInfo.Arguments = @"/C del %temp%\. %windir%\prefetch\. %windir%\temp\. /F /Q /S";
 					p.Start(); p.WaitForExit();
@@ -113,6 +210,7 @@ namespace usb_cleaner
 				
 				// chkdsk
 				if (cb3.Checked){
+					textBox.Text += "CHKDSK: \r\n";
 					label1.Font = new Font(label1.Font, FontStyle.Bold);
 					Application.DoEvents();
 					p.StartInfo.Arguments = @"/C chkdsk /f /x " + comboBox1.Text + ":";
@@ -127,8 +225,9 @@ namespace usb_cleaner
 				
 				// copy
 				if (cb4.Checked){
+					textBox.Text += "Copy FILE: \r\n";
 					//cb4.Font = new Font(cb4.Font, FontStyle.Bold);
-					textBox.Text += "COPY " + System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName + " to USB\r\n";
+					//textBox.Text += "COPY " + System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName + " to USB\r\n";
 					try{
 					    File.Copy(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName, usb_path + System.Diagnostics.Process.GetCurrentProcess().ProcessName + ".exe", true);
 					}
@@ -144,6 +243,7 @@ namespace usb_cleaner
 				
 				// delete suspect file
 				if (cb5.Checked){
+					textBox.Text += "Suspect FILE: \r\n";
 					label2.Font = new Font(label2.Font, FontStyle.Bold);
 					Application.DoEvents();
 					foreach(var suspected_file in suspecte_file_list){
@@ -169,6 +269,7 @@ namespace usb_cleaner
 	
 				// delete suspect folder
 				if (cb6.Checked){
+					textBox.Text += "Suspect DIR: \r\n";					
 					label3.Font = new Font(label3.Font, FontStyle.Bold);
 					Application.DoEvents();
 					foreach(var suspected_folder in suspecte_folder_list){
@@ -191,24 +292,60 @@ namespace usb_cleaner
 					
 				}
 				
+				if (cb7.Checked){
+					
+					textBox.Text += "MD5: \r\n";					
+					label2.Font = new Font(label2.Font, FontStyle.Bold);
+					Application.DoEvents();					
+
+					FileInfo[] MD5files = usb_path.GetFiles("*.*", SearchOption.AllDirectories);
+					foreach(var item in MD5files){
+						if ((new FileInfo(item.FullName).Length) < 1000000)
+						{
+							textBox.Text += item.FullName;
+							//Debug.WriteLine(":" + CalculatMD5Hash(item.FullName));
+							try{
+								if (Array.Exists(suspecte_MD5file_list, x => x == CalculatMD5Hash(item.FullName)))
+								{
+									//File.Delete(item.FullName);
+									textBox.Text += "------------[ fond ]";
+								}
+							}
+							catch(InvalidCastException i)
+							{
+								textBox.Text += "------------[ Err :" + i.Source + " ]";
+							}
+							textBox.Text += "\r\n";
+							Application.DoEvents();
+						}
+					}
+
+					progressBar1.Value = 70;
+					label2.Font = new Font(label2.Font, FontStyle.Regular);
+					Application.DoEvents();
+				}
 				
 				
 				// unhide all
-				if (cb7.Checked){
+				if (cb8.Checked){
+					textBox.Text += "Unhide FILE: \r\n";
 					label4.Font = new Font(label4.Font, FontStyle.Bold);
 					Application.DoEvents();
 					FileInfo[] unhide_files = usb_path.GetFiles("*.*", SearchOption.AllDirectories);
 					foreach(var item in unhide_files){
 						try{
-							File.SetAttributes(item.FullName, File.GetAttributes(item.FullName) & ~FileAttributes.Hidden );
-							textBox.Text = textBox.Text + "UNHIDE " + item.FullName + "\r\n";
+							if ((File.GetAttributes(item.FullName) & FileAttributes.Hidden)==FileAttributes.Hidden)
+							{
+								File.SetAttributes(item.FullName, File.GetAttributes(item.FullName) & ~FileAttributes.Hidden );
+								textBox.Text = textBox.Text + item.FullName + "\r\n";
+							}
 						}
 						catch(InvalidCastException i)
 						{
 							textBox.Text += "Error: " + i.Source + "\r\n";
 						}
 					}
-					progressBar1.Value = 70;
+					progressBar1.Value = 80;
 					label4.Font = new Font(label4.Font, FontStyle.Regular);
 					Application.DoEvents();
 				}
@@ -218,8 +355,11 @@ namespace usb_cleaner
 				comboBox1.Enabled = true;
 				button1.Enabled = true;
 				timer1.Enabled = true;
-				this.WindowState = FormWindowState.Minimized;
-				this.ShowInTaskbar = false;
+				if (hide)
+				{
+					this.WindowState = FormWindowState.Minimized;
+				}
+				//this.ShowInTaskbar = false;
 				insered_drive = null;
 			}
 		}
@@ -255,7 +395,6 @@ namespace usb_cleaner
 			{
 				timer1.Enabled = false;
 				comboBox1.Text = insered_drive;
-				this.WindowState = FormWindowState.Normal;
 				CleanUSB(insered_drive);
 			}
 		}
@@ -268,7 +407,7 @@ namespace usb_cleaner
 		void Button2Click(object sender, EventArgs e)
 		{
 			if (this.Size.Height == 210)
-				this.Size = new System.Drawing.Size(300, 511);
+				this.Size = new System.Drawing.Size(300, 530);
 			else 
 				this.Size = new System.Drawing.Size(300, 210);
 			
@@ -292,6 +431,10 @@ namespace usb_cleaner
 				this.WindowState = FormWindowState.Normal;
 				this.ShowInTaskbar = true;
 			}
+		}
+		void TextBoxDoubleClick(object sender, EventArgs e)
+		{
+			textBox.Text = "";
 		}
 	}
 }

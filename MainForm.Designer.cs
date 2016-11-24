@@ -19,7 +19,7 @@ namespace usb_cleaner
 		private System.Windows.Forms.CheckBox cb4;
 		private System.Windows.Forms.CheckBox cb5;
 		private System.Windows.Forms.CheckBox cb6;
-		private System.Windows.Forms.CheckBox cb7;
+		private System.Windows.Forms.CheckBox cb8;
 		private System.Windows.Forms.PictureBox pictureBox1;
 		private System.Windows.Forms.ProgressBar progressBar1;
 		private System.Windows.Forms.CheckBox cb3;
@@ -34,6 +34,7 @@ namespace usb_cleaner
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Button button2;
 		private System.Windows.Forms.Button button3;
+		private System.Windows.Forms.CheckBox cb7;
 		
 		/// <summary>
 		/// Disposes resources used by the form.
@@ -63,7 +64,7 @@ namespace usb_cleaner
 			this.cb4 = new System.Windows.Forms.CheckBox();
 			this.cb5 = new System.Windows.Forms.CheckBox();
 			this.cb6 = new System.Windows.Forms.CheckBox();
-			this.cb7 = new System.Windows.Forms.CheckBox();
+			this.cb8 = new System.Windows.Forms.CheckBox();
 			this.pictureBox1 = new System.Windows.Forms.PictureBox();
 			this.progressBar1 = new System.Windows.Forms.ProgressBar();
 			this.cb3 = new System.Windows.Forms.CheckBox();
@@ -78,6 +79,7 @@ namespace usb_cleaner
 			this.label4 = new System.Windows.Forms.Label();
 			this.button2 = new System.Windows.Forms.Button();
 			this.button3 = new System.Windows.Forms.Button();
+			this.cb7 = new System.Windows.Forms.CheckBox();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -135,17 +137,17 @@ namespace usb_cleaner
 			this.cb6.Text = "Delete suspect folder";
 			this.cb6.UseVisualStyleBackColor = true;
 			// 
-			// cb7
+			// cb8
 			// 
-			this.cb7.AutoSize = true;
-			this.cb7.Checked = true;
-			this.cb7.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.cb7.Location = new System.Drawing.Point(11, 445);
-			this.cb7.Name = "cb7";
-			this.cb7.Size = new System.Drawing.Size(89, 17);
-			this.cb7.TabIndex = 6;
-			this.cb7.Text = "Unhide folder";
-			this.cb7.UseVisualStyleBackColor = true;
+			this.cb8.AutoSize = true;
+			this.cb8.Checked = true;
+			this.cb8.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.cb8.Location = new System.Drawing.Point(11, 468);
+			this.cb8.Name = "cb8";
+			this.cb8.Size = new System.Drawing.Size(89, 17);
+			this.cb8.TabIndex = 6;
+			this.cb8.Text = "Unhide folder";
+			this.cb8.UseVisualStyleBackColor = true;
 			// 
 			// pictureBox1
 			// 
@@ -213,6 +215,7 @@ namespace usb_cleaner
 			this.textBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
 			this.textBox.Size = new System.Drawing.Size(261, 117);
 			this.textBox.TabIndex = 13;
+			this.textBox.DoubleClick += new System.EventHandler(this.TextBoxDoubleClick);
 			// 
 			// timer1
 			// 
@@ -271,16 +274,29 @@ namespace usb_cleaner
 			this.button3.Name = "button3";
 			this.button3.Size = new System.Drawing.Size(118, 30);
 			this.button3.TabIndex = 20;
-			this.button3.Text = "Systray";
+			this.button3.Text = "hide to systray";
 			this.button3.UseVisualStyleBackColor = true;
 			this.button3.Click += new System.EventHandler(this.Button3Click);
+			// 
+			// cb7
+			// 
+			this.cb7.AutoSize = true;
+			this.cb7.Checked = true;
+			this.cb7.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.cb7.Location = new System.Drawing.Point(11, 445);
+			this.cb7.Name = "cb7";
+			this.cb7.Size = new System.Drawing.Size(139, 17);
+			this.cb7.TabIndex = 21;
+			this.cb7.Text = "Delete suspect file MD5";
+			this.cb7.UseVisualStyleBackColor = true;
 			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.CancelButton = this.button1;
-			this.ClientSize = new System.Drawing.Size(284, 472);
+			this.ClientSize = new System.Drawing.Size(284, 491);
+			this.Controls.Add(this.cb7);
 			this.Controls.Add(this.button3);
 			this.Controls.Add(this.button2);
 			this.Controls.Add(this.label4);
@@ -295,7 +311,7 @@ namespace usb_cleaner
 			this.Controls.Add(this.cb1);
 			this.Controls.Add(this.cb2);
 			this.Controls.Add(this.cb3);
-			this.Controls.Add(this.cb7);
+			this.Controls.Add(this.cb8);
 			this.Controls.Add(this.cb6);
 			this.Controls.Add(this.cb5);
 			this.Controls.Add(this.cb4);
