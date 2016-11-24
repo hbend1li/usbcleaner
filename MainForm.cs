@@ -26,7 +26,7 @@ namespace usb_cleaner
 
 	public partial class MainForm : Form
 	{
-		public readonly string app_titel = "USB Cleaner build 7";
+		public readonly string app_titel = "USB Cleaner build 8";
 		public static string insered_drive;
 		public readonly string[] suspecte_file_list = {
 			"*.lnk",
