@@ -1,5 +1,5 @@
 # USB Cleaner
-### Version 0 Build 7
+
 ![alt text](https://github.com/hbendalibraham/usbcleaner/raw/master/screenshot/Capture.PNG "Logo Title Text 1")
 
 
@@ -85,4 +85,5 @@
 * Google
 
 ### Download
-> download from > USB Cleaner <https://github.com/hbendalibraham/usbcleaner/raw/master/bin/Debug/USB%20Cleaner.exe>
+> download from > USB Cleaner Version **0** / Build **7**
+> <https://github.com/hbendalibraham/usbcleaner/raw/master/bin/Debug/USB%20Cleaner.exe>
