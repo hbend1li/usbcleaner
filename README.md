@@ -94,7 +94,8 @@ d1ab72db2bedd2f255d35da3da0d4b16 runsc.exe
 9e267f980ca27799369497d6831779ae 04  
 a2fecccd2f987f4463b598a1ee6bc5c3 Worm.VBS.Agent.ft  
 84a5746202decee74d907a37015a01d4 googleupdate.a3x  
-76d8da3d285176a523e605dc5b9e7bef Photo03.scr      
+76d8da3d285176a523e605dc5b9e7bef Photo03.scr     
+1d1d18589a688579faf026dfe822798f 1d1d18589a688579faf026dfe822798f.exe 
 ```  
 
 ### Log
@@ -102,5 +103,5 @@ a2fecccd2f987f4463b598a1ee6bc5c3 Worm.VBS.Agent.ft
 
 
 ### Download
-> download from > USB Cleaner Version **0** / Build **9**
+> download from > USB Cleaner Version **0** / Build **10**
 > <https://github.com/hbendalibraham/usbcleaner/raw/master/bin/Debug/USB%20Cleaner.exe>
