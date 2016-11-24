@@ -97,6 +97,10 @@ a2fecccd2f987f4463b598a1ee6bc5c3 Worm.VBS.Agent.ft
 76d8da3d285176a523e605dc5b9e7bef Photo03.scr      
 ```  
 
+### Log
+* Close to system tray  
+
+
 ### Download
-> download from > USB Cleaner Version **0** / Build **8**
+> download from > USB Cleaner Version **0** / Build **9**
 > <https://github.com/hbendalibraham/usbcleaner/raw/master/bin/Debug/USB%20Cleaner.exe>

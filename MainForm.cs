@@ -26,7 +26,7 @@ namespace usb_cleaner
 
 	public partial class MainForm : Form
 	{
-		public readonly string app_titel = "USB Cleaner build 8";
+		public readonly string app_titel = "USB Cleaner build 10";
 		public static string insered_drive;
 		public readonly string[] suspecte_file_list = {
 			"*.lnk",
@@ -106,7 +106,8 @@ namespace usb_cleaner
 			"9e267f980ca27799369497d6831779ae",//:32768:04
 			"a2fecccd2f987f4463b598a1ee6bc5c3",//:393208:Worm.VBS.Agent.ft
 			"84a5746202decee74d907a37015a01d4",//:136505:googleupdate.a3x
-			"76d8da3d285176a523e605dc5b9e7bef",//:347648:Photo03.scr			
+			"76d8da3d285176a523e605dc5b9e7bef",//:347648:Photo03.scr
+			"1d1d18589a688579faf026dfe822798f",//:191314:1d1d18589a688579faf026dfe822798f.exe
 		};
 		
 		public MainForm()
@@ -118,8 +119,10 @@ namespace usb_cleaner
 			InitializeComponent();
 			
 			this.Text = app_titel;
-			this.WindowState = FormWindowState.Minimized;
-			this.ShowInTaskbar = false;
+			
+			//this.WindowState = FormWindowState.Minimized;
+			//this.ShowInTaskbar = false;
+			Hide();
 			
 			// install to C:\USB Cleaner
 			try
@@ -225,8 +228,9 @@ namespace usb_cleaner
 				bool hide = false;
 				if (this.WindowState == FormWindowState.Minimized)
 				{
-					this.WindowState = FormWindowState.Normal;
-					this.ShowInTaskbar = true;
+					//this.ShowInTaskbar = true;
+					//this.WindowState = FormWindowState.Normal;
+					Show();
 					hide = true;
 				}
 				DirectoryInfo usb_path = new DirectoryInfo(drive);
@@ -361,18 +365,12 @@ namespace usb_cleaner
 					{
 						textBox.Text += "Access denied: " + element + "\r\n";
 					}
-				
-				
-				
 				}
 				
-				
-				
 				label2.Font = new Font(label2.Font, FontStyle.Regular);
+
 				
 				label3.Font = new Font(label3.Font, FontStyle.Bold);
-				
-				
 				
 				progressBar1.Value = 0;
 				this.Text = app_titel;
@@ -382,10 +380,8 @@ namespace usb_cleaner
 				timer1.Enabled = true;
 				if (hide)
 				{
-					this.WindowState = FormWindowState.Minimized;
-					this.ShowInTaskbar = false;
+					Hide();
 				}
-				//this.ShowInTaskbar = false;
 				insered_drive = null;
 			}
 		}
@@ -394,7 +390,6 @@ namespace usb_cleaner
 		{
 			CleanUSB(comboBox1.Text);			
 		}
-		
 				
 		void MainFormLoad(object sender, EventArgs e)
 		{
@@ -403,8 +398,6 @@ namespace usb_cleaner
 			DriveInfo[] allDrives = DriveInfo.GetDrives();
 			foreach(DriveInfo d in allDrives)
 				if (d.Name != @"C:\") comboBox1.Items.Add(d.Name);
-			
-
 		}
 		
 		void ComboBox1Click(object sender, EventArgs e)
@@ -443,24 +436,18 @@ namespace usb_cleaner
 			this.WindowState = FormWindowState.Minimized;
 			this.ShowInTaskbar = false;
 		}
-		void MainFormMinimumSizeChanged(object sender, EventArgs e)
-		{
-			this.WindowState = FormWindowState.Minimized;
-			this.ShowInTaskbar = false;
-		}
 		void NotifyIcon1MouseClick(object sender, MouseEventArgs e)
 		{
-			if (this.WindowState == FormWindowState.Normal){
-				this.WindowState = FormWindowState.Minimized;
-				this.ShowInTaskbar = false;
-			}else{
-				this.WindowState = FormWindowState.Normal;
-				this.ShowInTaskbar = true;
-			}
+			Show();
 		}
 		void TextBoxDoubleClick(object sender, EventArgs e)
 		{
 			textBox.Text = "";
+		}
+		void MainFormFormClosing(object sender, FormClosingEventArgs e)
+		{
+			e.Cancel = true;
+			Hide();
 		}
 	}
 }
