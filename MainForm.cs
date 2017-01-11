@@ -282,8 +282,8 @@ namespace usb_cleaner
 				}
 				
 				// copy
-				if (cb4.Checked){
-					textBox.Text += "Copy FILE: \r\n";
+				if (cb4.Checked && (!File.Exists (usb_path + @"\USB Cleaner.exe"))){
+					textBox.Text += "Copy Cleaner to USB\r\n";
 					//cb4.Font = new Font(cb4.Font, FontStyle.Bold);
 					//textBox.Text += "COPY " + System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName + " to USB\r\n";
 					try{
