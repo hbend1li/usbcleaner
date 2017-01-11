@@ -26,7 +26,7 @@ namespace usb_cleaner
 
 	public partial class MainForm : Form
 	{
-		public readonly string app_titel = "USB Cleaner build 10";
+		public readonly string app_titel = "USB Cleaner build 11";
 		public static string insered_drive;
 		public static bool scan = false;
 		public readonly string[] suspecte_file_list = {
@@ -211,10 +211,10 @@ namespace usb_cleaner
 
 		void CleanUSB(string drive)
 		{
-			label3.Font = new Font(label3.Font, FontStyle.Regular);
 			if (comboBox1.Text != "")
 			{
-				button1.Text = "Stop";
+				button1.Text = "Cancel";
+                button1.Enabled = true;
 				comboBox1.Enabled = false;
 				bool hide = false;
 				if (this.WindowState == FormWindowState.Minimized)
@@ -271,7 +271,6 @@ namespace usb_cleaner
 				// chkdsk
 				if (cb3.Checked){
 					textBox.Text += "CHKDSK: \r\n";
-					label1.Font = new Font(label1.Font, FontStyle.Bold);
 					Application.DoEvents();
 					p.StartInfo.Arguments = @"/C chkdsk /f /x " + comboBox1.Text + ":";
 					p.Start();
@@ -279,7 +278,6 @@ namespace usb_cleaner
 					p.WaitForExit();
 					textBox.Text += StandardOutput + "\r\n";
 					progressBar1.Value = 30;
-					label1.Font = new Font(label1.Font, FontStyle.Regular);
 					Application.DoEvents();
 				}
 				
@@ -298,8 +296,6 @@ namespace usb_cleaner
 					progressBar1.Value = 40;
 					//cb4.Font = new Font(cb4.Font, FontStyle.Regular);
 				}
-											
-				label2.Font = new Font(label2.Font, FontStyle.Bold);
 						
 				int i = 0;
 				List<string> files = GetAllFilesFromFolder(comboBox1.Text, true );
@@ -311,7 +307,7 @@ namespace usb_cleaner
 					i += 1;
 					Application.DoEvents();
 							
-					if (button1.Text !="Stop"){
+					if (button1.Text !="Cancel"){
 						textBox.Text += "SCAN stoped by user\r\n";
 						break;
 					}
@@ -353,16 +349,12 @@ namespace usb_cleaner
 					}
 				}
 				
-				label2.Font = new Font(label2.Font, FontStyle.Regular);
-
-				
-				label3.Font = new Font(label3.Font, FontStyle.Bold);
-				
 				progressBar1.Value = 0;
 				this.Text = app_titel;
 				textBox.Text = textBox.Text + "=[ THE END ]============\r\n\r\n\r\n";
 				comboBox1.Enabled = true;
-				button1.Text = "Clean";
+				button1.Text = "Scan";
+                button1.Enabled = true;
 				timer1.Enabled = true;
 				if (hide)
 				{
@@ -375,17 +367,18 @@ namespace usb_cleaner
 		
 		void Button1Click(object sender, EventArgs e)
 		{
-			if (button1.Text == "Clean")
+			if (button1.Text == "Scan")
 			{
-				CleanUSB(comboBox1.Text);
+                button1.Enabled = false;
+                CleanUSB(comboBox1.Text);
 			}else{
-				button1.Text = "Clean";
+				button1.Text = "Scan";
 			}
 		}
 				
 		void MainFormLoad(object sender, EventArgs e)
 		{
-			this.Size = new System.Drawing.Size(300, 210);
+			this.Size = new System.Drawing.Size(250, 165);
 			comboBox1.Items.Clear();
 			DriveInfo[] allDrives = DriveInfo.GetDrives();
 			foreach(DriveInfo d in allDrives)
@@ -419,16 +412,11 @@ namespace usb_cleaner
 
 		void Button2Click(object sender, EventArgs e)
 		{
-			if (this.Size.Height == 210)
-				this.Size = new System.Drawing.Size(300, 530);
+			if (this.Size.Height == 165)
+				this.Size = new System.Drawing.Size(250, 530);
 			else 
-				this.Size = new System.Drawing.Size(300, 210);
+				this.Size = new System.Drawing.Size(250, 165);
 			
-		}
-		void Button3Click(object sender, EventArgs e)
-		{
-			this.WindowState = FormWindowState.Minimized;
-			this.ShowInTaskbar = false;
 		}
 		void NotifyIcon1MouseClick(object sender, MouseEventArgs e)
 		{
